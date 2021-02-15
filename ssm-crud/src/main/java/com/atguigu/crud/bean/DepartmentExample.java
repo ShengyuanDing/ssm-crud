@@ -3,6 +3,9 @@ package com.atguigu.crud.bean;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class DepartmentExample {
     protected String orderByClause;
 

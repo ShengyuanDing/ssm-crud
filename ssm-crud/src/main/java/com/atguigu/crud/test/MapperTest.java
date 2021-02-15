@@ -15,7 +15,7 @@ import com.atguigu.crud.dao.DepartmentMapper;
 import com.atguigu.crud.dao.EmployeeMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:applicationContex.xml" })
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class MapperTest {
 
 	@Autowired
@@ -47,7 +47,7 @@ public class MapperTest {
 	@Test
 	public void testCRUDBatch() {
 		EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 50; i++) {
 			String uid = UUID.randomUUID().toString().substring(0, 5) + i;
 			mapper.insertSelective(new Employee(null, uid, "M", uid + "@hotmail.com", 1));
 		}

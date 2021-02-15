@@ -1,5 +1,8 @@
 package com.atguigu.crud.bean;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Department {
 	private Integer deptId;
 
