@@ -2,14 +2,19 @@ package com.atguigu.crud.bean;
 
 import org.springframework.stereotype.Component;
 
+import jakarta.validation.constraints.Pattern;
+
 @Component
 public class Employee {
 	private Integer empId;
 
+	@Pattern(regexp="^[a-zA-Z0-9_-]{3,16}$", message="Name has to be 3 to 16 characters")
 	private String empName;
 
 	private String gender;
 
+	@Pattern(regexp="^([a-zA-Z0-9_\\.-]+)@([a-zA-Z0-9-]+)\\.([a-z\\.]{2,6})$",
+			message="invalid email address")
 	private String email;
 
 	private Integer dId;

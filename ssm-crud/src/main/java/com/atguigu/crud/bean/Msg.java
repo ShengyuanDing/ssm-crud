@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class Msg {
 
+	/**
+	 * Status code, 100:success, 200:failure
+	 */
 	private Integer code;
 	private String message;
 	private Map<String, Object> extend = new HashMap<String, Object>();
