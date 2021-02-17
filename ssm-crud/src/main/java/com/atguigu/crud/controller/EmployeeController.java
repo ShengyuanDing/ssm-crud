@@ -1,5 +1,7 @@
 package com.atguigu.crud.controller;
 
+import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.atguigu.crud.bean.Employee;
 import com.atguigu.crud.bean.Msg;
 import com.atguigu.crud.service.EmployeeService;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -34,6 +35,26 @@ public class EmployeeController {
 
 	@Autowired
 	EmployeeService employeeService;
+
+	/**
+	 * delete an employee by Id
+	 */
+	@RequestMapping(value = "/emp/{id}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Msg deleteEmp(@PathVariable("id") String ids) {
+		if (ids.contains("-")) {
+			String[] del_ids = ids.split("-");
+			List<Integer> delIds = new ArrayList<Integer>();
+			for (String s : del_ids) {
+				delIds.add(Integer.parseInt(s));
+			}
+			employeeService.batchDelete(delIds);
+		} else {
+			Integer id = Integer.parseInt(ids);
+			employeeService.deleteEmpById(id);
+		}
+		return Msg.success();
+	}
 
 	/**
 	 * update an employee by Id

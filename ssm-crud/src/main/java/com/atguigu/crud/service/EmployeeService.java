@@ -64,12 +64,33 @@ public class EmployeeService {
 	}
 
 	/**
-	 * Update employee by id
+	 * Update an employee by id
 	 * 
 	 * @param emp
 	 */
 	public void updateEmp(Employee emp) {
 		employeeMapper.updateByPrimaryKeySelective(emp);
+	}
+
+	/**
+	 * Delete an employee by id
+	 * 
+	 * @param id
+	 */
+	public void deleteEmpById(Integer id) {
+		employeeMapper.deleteByPrimaryKey(id);
+	}
+
+	/**
+	 * A method to delete employes with id in a list
+	 * 
+	 * @param delIds the list of id to be deleted
+	 */
+	public void batchDelete(List<Integer> delIds) {
+		EmployeeExample example = new EmployeeExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andEmpIdIn(delIds);
+		employeeMapper.deleteByExample(example);
 	}
 
 }

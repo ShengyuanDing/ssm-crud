@@ -140,7 +140,7 @@
 		<div class="row">
 			<div class="col-md-4 col-md-offset-8">
 				<button class="btn btn-primary" id="emp_add_modal_btn">ADD</button>
-				<button class="btn btn-danger">DELETE</button>
+				<button class="btn btn-danger" id="emp_delete_all_btn">DELETE</button>
 			</div>
 		</div>
 		<!-- table -->
@@ -149,6 +149,7 @@
 				<table class="table table-hover" id="emps_table">
 					<thead>
 						<tr>
+							<th><input type="checkbox" id="check_all" /></th>
 							<th>ID</th>
 							<th>Name</th>
 							<th>Gender</th>
@@ -204,29 +205,39 @@
 			$("#emps_table tbody").empty();
 			//build the table
 			var emps = result.extend.pageInfo.list;
-			$.each(emps, function(index, item) {
-				var empIdTd = $("<td></td>").append(item.empId);
-				var empNameTd = $("<td></td>").append(item.empName);
-				var genderTd = $("<td></td>").append(item.gender);
-				var emailTd = $("<td></td>").append(item.email);
-				var departmentTd = $("<td></td>").append(
-						item.department.deptName);
-				var editBtn = $("<button></button").addClass(
-						"btn btn-primary btn-sm edit_btn").append(
-						"<span></span>").addClass("glyphicon glyphicon-pencil")
-						.append("EDIT");
-				editBtn.attr("edit-id", item.empId);
-				var deleteBtn = $("<button></button").addClass(
-						"btn btn-danger btn-sm delete_btn").append(
-						"<span></span>").addClass("glyphicon glyphicon-trash")
-						.append("DELETE");
-				deleteBtn.attr("delete-id", item.empId);
-				var btnTd = $("<td></td>").append(editBtn).append(" ").append(
-						deleteBtn);
-				$("<tr></tr>").append(empIdTd).append(empNameTd).append(
-						genderTd).append(emailTd).append(departmentTd).append(
-						btnTd).appendTo("#emps_table tbody");
-			});
+			$
+					.each(
+							emps,
+							function(index, item) {
+								var checkBoxTd = $("<td><input type='checkbox' class='check_item' /></td>");
+								var empIdTd = $("<td></td>").append(item.empId);
+								var empNameTd = $("<td></td>").append(
+										item.empName);
+								var genderTd = $("<td></td>").append(
+										item.gender);
+								var emailTd = $("<td></td>").append(item.email);
+								var departmentTd = $("<td></td>").append(
+										item.department.deptName);
+								var editBtn = $("<button></button").addClass(
+										"btn btn-primary btn-sm edit_btn")
+										.append("<span></span>").addClass(
+												"glyphicon glyphicon-pencil")
+										.append("EDIT");
+								editBtn.attr("edit-id", item.empId);
+								var deleteBtn = $("<button></button").addClass(
+										"btn btn-danger btn-sm delete_btn")
+										.append("<span></span>").addClass(
+												"glyphicon glyphicon-trash")
+										.append("DELETE");
+								deleteBtn.attr("delete-id", item.empId);
+								var btnTd = $("<td></td>").append(editBtn)
+										.append(" ").append(deleteBtn);
+								$("<tr></tr>").append(checkBoxTd).append(
+										empIdTd).append(empNameTd).append(
+										genderTd).append(emailTd).append(
+										departmentTd).append(btnTd).appendTo(
+										"#emps_table tbody");
+							});
 		}
 
 		//A function for building page information
@@ -528,6 +539,73 @@
 				show_validation_msg(element, "success", "");
 			}
 		}
+
+		//Bind click event to Delete button
+		$(document).on("click", ".delete_btn", function() {
+			//1. Pop up confirm window
+			var empName = $(this).parents("tr").find("td:eq(2)").text();
+			var id = $(this).attr("delete-id");
+			if (confirm("Confirm to delete [ " + empName + " ]?")) {
+				//2. Send request to delete the employee
+				$.ajax({
+					url : "${APP_PATH}/emp/" + id,
+					type : "DELETE",
+					success : function(result) {
+						alert(result.message);
+						to_page(currentPage);
+					}
+				});
+			}
+		});
+
+		//binding click event on check_all check box
+		$("#check_all").click(function() {
+			$(".check_item").prop("checked", $(this).prop("checked"));
+		});
+
+		//binding click eveent on check_item check box
+		$(document)
+				.on(
+						"click",
+						".check_item",
+						function() {
+							// get the number of checked chechbox
+							var flag = $(".check_item:checked").length == $(".check_item").length;
+							$("#check_all").prop("checked", flag);
+						});
+
+		//binding click event on delete all button
+		$("#emp_delete_all_btn")
+				.click(
+						function() {
+							//1.get the empName of the checked items
+							var empNames = "";
+							var empIds = "";
+							$.each($(".check_item:checked"), function() {
+								empNames += $(this).parents("tr").find(
+										"td:eq(2)").text()
+										+ ",";
+								empIds += $(this).parents("tr")
+										.find("td:eq(1)").text()
+										+ "-";
+							});
+							empNames = empNames.substring(0,
+									empNames.length - 1);
+							empIds = empIds.substring(0, empIds.length - 1);
+
+							if (confirm("Are you sure to delete [ " + empNames
+									+ " ]?")) {
+								$.ajax({
+									url : "${APP_PATH}/emp/" + empIds,
+									type : "DELETE",
+									success : function(result) {
+										alert(result.message);
+										to_page(currentPage);
+										$("#check_all").prop("checked", false);
+									}
+								});
+							}
+						});
 	</script>
 </body>
 </html>
